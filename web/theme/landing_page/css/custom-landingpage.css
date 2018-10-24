@@ -1,0 +1,140 @@
+div#get-started{
+  background-color: #f15a23;
+  width: 180px;
+  padding: 10px;
+  margin: 5px;
+  text-transform: uppercase;
+  text-align: center;
+}
+div#text-beranda{
+  line-height: 2;
+}
+
+#text-tentang-kami {
+  position: relative;
+  bottom: 8px;
+  left: 16px;
+  background-color: #0891a0;
+  color: white;
+  width: 450px;
+  padding: 40px;
+  line-height: 2;
+  text-align: justify;
+  /*margin-top: 20px;*/
+}
+div#image-tentang-kami{
+  padding-left: 3em;
+  margin-top: 20%;
+
+}
+div#content-services{
+  padding: 3em 5em 3em 5em;
+  /*border: 1px solid green;*/
+}
+#footer > .contentfoot{
+background-color: #0f8695;
+padding: 2rem 4em;
+/*height: 18em;*/
+}
+#footer > .foot{
+  background-color: #0f8695;
+  padding: 1%;
+  border-top: 1px solid white;
+}
+#text-footer{
+color: white;
+}
+#mainNav .navbar-nav>li.nav-item>a.nav-link, #mainNav .navbar-nav>li.nav-item>a.nav-link:focus {
+color: rgba(67, 63, 63, 0.7);
+}
+div#text-email-footer{
+  background-color: white;
+  width: 180px;
+  padding: 6px;
+  margin: 5px 5px 10px 5px;
+  text-align: center;
+  color: #79797d;
+  border-radius: 5px;
+  font-size: small;
+}
+div#text-subscribe-footer{
+  background-color: #f15a23;
+  width: 90px;
+  padding: 7px ;
+  margin: 5px;
+  text-align: center;
+  color: #ffffff;
+  border-radius: 3px;
+  font-size: small;
+}
+div#border-email{
+  /*width: 16em;*/
+  width: 100%;
+  padding: 7px;
+  margin: 5px;
+  text-align: center;
+  border: 1.3px solid #ae9e9e;
+  border-radius: 4px;
+  font-size: small;
+}
+div#footer-right-content{
+  width: 16em;
+  /*padding: 2em 3em 0em 2em;*/
+  margin: 5px;
+  color: white;
+  font-size: small;
+  line-height: 2;
+}
+div#footer-right-content>img{
+  margin: 6px 0px 6px 0px;
+  padding: 6px 10px 6px 0px;
+}
+section#services {
+  padding: 1rem 0;
+}
+section#tentang-kami {
+  padding: 4rem 0 3rem 0;
+}
+h4{
+  text-align: left;
+  line-height: 2;
+  padding-bottom: 0px;
+}
+#text-services{
+  font-size: medium;
+  line-height: 2;
+}
+#header-beranda{
+  background-image: url("/theme/assets/mom_asset/Landing Pages/Illustration Banner.png");
+  background-size: 77%;
+  background-repeat: no-repeat;
+  background-position: right; 
+}
+#text-footer-logo{
+  font-size: medium;
+  line-height: 2;
+  color: white; 
+  padding-top: 12px;
+}
+#footer-social-media{
+  display: inline-block;
+  max-width: 98%;
+  height: auto;
+  width: 30%;
+  margin: 1%;
+}
+#right-content{
+  vertical-align: middle;
+    display: inline-block;
+    float: none;
+}
+hr {
+  max-width: none;
+  border-width:1.4px;
+  border-color: white;
+}
+.footer-trademark{
+  text-align: center;
+  color: white;
+  /*padding: 5px;*/
+}
