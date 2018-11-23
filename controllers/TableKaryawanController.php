@@ -3,17 +3,18 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\MatrixKriteria;
-use app\models\MatrixKriteriaSearch;
+use app\models\TableKaryawan;
+use app\models\TableKaryawanSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-
+use app\controllers\ProcessController;
 use app\controllers\ProcessTwoController;
+
 /**
- * MatrixKriteriaController implements the CRUD actions for MatrixKriteria model.
+ * TableKaryawanController implements the CRUD actions for TableKaryawan model.
  */
-class MatrixKriteriaController extends Controller
+class TableKaryawanController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -24,48 +25,29 @@ class MatrixKriteriaController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['POST'],
+                    'delete' => ['GET'],
                 ],
             ],
         ];
     }
 
     /**
-     * Lists all MatrixKriteria models.
+     * Lists all TableKaryawan models.
      * @return mixed
      */
     public function actionIndex()
     {
-        // Yii::$app->db->createCommand()->truncateTable('matrix_kriteria')->execute();
-
-        //  $Step1 = new MatrixKriteria();
-        //  $Step1->setAttributes(ProcessTwoController::Step1());
-
-        //  $Step2 = new MatrixKriteria();
-        //  $Step2->setAttributes(ProcessTwoController::Step2());
-
-        //  $Step3 = new MatrixKriteria();
-        //  $Step3->setAttributes(ProcessTwoController::Step3());
-
-        //  $Step4 = new MatrixKriteria();
-        //  $Step4->setAttributes(ProcessTwoController::Step4());
-
-        //  $Step1->save();
-        //  $Step2->save();
-        //  $Step3->save();
-        //  $Step4->save();
-
-        $searchModel = new MatrixKriteriaSearch();
+        ProcessTwoController::updateData();
+        $searchModel = new TableKaryawanSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
         return $this->render('index', [
             'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+            'dataProvider' => $dataProvider
         ]);
     }
 
     /**
-     * Displays a single MatrixKriteria model.
+     * Displays a single TableKaryawan model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -78,15 +60,16 @@ class MatrixKriteriaController extends Controller
     }
 
     /**
-     * Creates a new MatrixKriteria model.
+     * Creates a new TableKaryawan model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new MatrixKriteria();
+        $model = new TableKaryawan();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            ProcessTwoController::updateData();
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -96,7 +79,7 @@ class MatrixKriteriaController extends Controller
     }
 
     /**
-     * Updates an existing MatrixKriteria model.
+     * Updates an existing TableKaryawan model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -107,6 +90,7 @@ class MatrixKriteriaController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            ProcessTwoController::updateData();
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -116,7 +100,7 @@ class MatrixKriteriaController extends Controller
     }
 
     /**
-     * Deletes an existing MatrixKriteria model.
+     * Deletes an existing TableKaryawan model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -124,21 +108,22 @@ class MatrixKriteriaController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+        
+        if ($this->findModel($id)->delete()) {
+            return $this->redirect(['index']);
+        }
     }
 
     /**
-     * Finds the MatrixKriteria model based on its primary key value.
+     * Finds the TableKaryawan model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return MatrixKriteria the loaded model
+     * @return TableKaryawan the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = MatrixKriteria::findOne($id)) !== null) {
+        if (($model = TableKaryawan::findOne($id)) !== null) {
             return $model;
         }
 

@@ -5,24 +5,23 @@ namespace app\models;
 use Yii;
 
 /**
- * This is the model class for table "matrix_kriteria".
+ * This is the model class for table "table_karyawan".
  *
  * @property int $id
+ * @property string $nama
  * @property int $komunikasi
  * @property int $kerjasama
  * @property int $kejujuran
- * @property int $interpersonal
+ * @property int $interpesonal
  */
-class MatrixKriteria extends \yii\db\ActiveRecord
+class TableKaryawan extends \yii\db\ActiveRecord
 {
-    public $sum_komunikasi, $sum_kerjasama, $sum_kejujuran, $sum_interpesonal;
-    public $avg_komunikasi, $avg_kerjasama, $avg_kejujuran, $avg_interpesonal;
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'matrix_kriteria';
+        return 'table_karyawan';
     }
 
     /**
@@ -31,7 +30,8 @@ class MatrixKriteria extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['komunikasi', 'kerjasama', 'kejujuran', 'interpesonal', 'sum_komunikasi', 'sum_kerjasama', 'sum_kejujuran', 'sum_interpesonal', 'avg_komunikasi', 'avg_kerjasama', 'avg_kejujuran', 'avg_interpesonal' ], 'number'],
+            [['komunikasi', 'kerjasama', 'kejujuran', 'interpesonal'], 'integer'],
+            [['nama'], 'string', 'max' => 100],
         ];
     }
 
@@ -42,10 +42,11 @@ class MatrixKriteria extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
+            'nama' => 'Nama',
             'komunikasi' => 'Komunikasi',
             'kerjasama' => 'Kerjasama',
             'kejujuran' => 'Kejujuran',
-            'interpersonal' => 'Interpersonal',
+            'interpesonal' => 'Interpesonal',
         ];
     }
 }

@@ -11,6 +11,8 @@ use app\models\Users;
 use app\models\charts\ModelChart;
 use app\models\charts\ModelForm;
 use app\models\MerchantTransaction;
+use app\models\PrioritasSoftSkillAhp;
+use app\models\SoftSkillSearch;
 
 
 class DashboardController extends Controller
@@ -42,7 +44,14 @@ class DashboardController extends Controller
     
     public function actionIndex()
     {
-        return $this->render('index');
+       $model = new ModelForm();
+       $searchModel = new SoftSkillSearch();
+       $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        return $this->render('index',[
+            'model' => $model,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider
+        ]);
     }
 
 }

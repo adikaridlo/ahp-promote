@@ -1,0 +1,9 @@
+.nav-pills {
+    display: flex;
+    justify-content: center;
+}
+.nav-pills>li>a, .nav-tabs>li>a {
+	width: 150px;
+	text-align: center;
+	background-color: #E1E5EC;
+}

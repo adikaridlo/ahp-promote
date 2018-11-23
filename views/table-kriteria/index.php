@@ -9,6 +9,7 @@ use yii\widgets\Pjax;
 
 $this->title = 'Table Kriteria';
 $this->params['breadcrumbs'][] = $this->title;
+$this->registerCss($this->render('_tab.css'));
 ?>
 <div class="row">
     <div class="col-md-12">                     
@@ -25,10 +26,35 @@ $this->params['breadcrumbs'][] = $this->title;
                 </center> 
             </div> 
             <div class="portlet-body"> 
-                <?php Pjax::begin(['enablePushState' => false,'timeout' => 3000, 'id' => 'myPjax']);?>
-                <?php  echo $this->render('_form', ['model' => $model, 'labels' => $labels]); ?>
-                <?php Pjax::end(); ?>
-            </div>
+                <!-- Start Tab -->
+                    <div class="portlet light bordered">
+                        <div class="portlet-body nav-center">
+                            <ul class="nav nav-pills">
+                                <li class="active">
+                                    <a href="#tab_1" data-toggle="tab"> Tabel Kriteria </a>
+                                </li>
+                                <li>
+                                    <a href="#tab_2" data-toggle="tab"> Metrik Kriteria </a>
+                                </li>
+                            </ul>
+                        </div>
+                            <div class="portlet-body nav-center">
+                            <div class="tab-content">
+                                <div class="tab-pane fade active in" id="tab_1">
+                                    <?php Pjax::begin(['enablePushState' => false,'timeout' => 3000, 'id' => 'myPjax']);?>
+                                    <?php echo $this->render('_form', ['model' => $model, 'labels' => $labels]); ?>
+                                    <?php Pjax::end(); ?>
+                                </div>
+                                <div class="tab-pane fade" id="tab_2">
+                                    <?php Pjax::begin(['enablePushState' => false,'timeout' => 3000, 'id' => 'myPjax']);?>
+                                    <?php echo $this->render('_update_metrix', ['model' => $model, 'labels' => $labels]); ?>
+                                    <?php Pjax::end(); ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <!-- End Tab -->
+        </div>
         </div>
     </div>
 </div>

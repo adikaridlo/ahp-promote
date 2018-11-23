@@ -4,10 +4,10 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\MatrixKriteriaSearch */
+/* @var $searchModel app\models\TableKaryawanSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Matrix Kriterias';
+$this->title = 'Table Karyawans';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="row">
@@ -26,7 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </div> 
             <div class="portlet-body"> 
                 <p>
-                    <!-- <?= Html::a('Create Phone Prefix', ['create'], ['class' => 'btn btn-success']) ?> -->
+                    <?= Html::a('Tambah Karyawan', ['create'], ['class' => 'btn btn-success']) ?>
                 </p>
                  <?php Pjax::begin(['enablePushState' => false,'timeout' => 3000, 'id' => 'myPjax']);
                      ?>
@@ -36,14 +36,19 @@ $this->params['breadcrumbs'][] = $this->title;
 
                         <?= GridView::widget([
                         'dataProvider' => $dataProvider,
-                        // 'filterModel' => $searchModel,
+                        'filterModel' => $searchModel,
                         'columns' => [
-                            // [
-                            //     'class'         => 'yii\grid\SerialColumn',
-                            //     'header'        => 'No', 
-                            //     'headerOptions' => ['style'=> 'width: 3%;text-align:center;color:#337ab7'],
-                            //     'contentOptions' => ['style'=> 'text-align:center'],
-                            // ],
+                            [
+                                'class'         => 'yii\grid\SerialColumn',
+                                'header'        => 'No', 
+                                'headerOptions' => ['style'=> 'width: 3%;text-align:center;color:#337ab7'],
+                                'contentOptions' => ['style'=> 'text-align:center'],
+                            ],
+                            [
+                                'attribute' => 'nama',
+                                'headerOptions' => ['style' => 'text-align:center'],
+                                'contentOptions' => ['style' => 'text-align:center']
+                            ],
                             [
                                 'attribute' => 'komunikasi',
                                 'headerOptions' => ['style' => 'text-align:center'],

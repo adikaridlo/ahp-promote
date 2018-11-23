@@ -16,7 +16,8 @@ $this->registerCssFile(Yii::getAlias('@web/theme/') . 'assets/global/plugins/sel
     <?php $form = ActiveForm::begin([
         'options' => ['autoComplete'=>'off'], 
         'layout' => 'horizontal',
-        'action' => ['table-kriteria/create'],
+        'action' => ['process-two/update-metrix'],
+        'method' => 'POST',
         'fieldConfig' => [
             'template' => "<center>{label}\n{beginWrapper}\n{input}\n{hint}\n{error}\n{endWrapper}",
             'horizontalCssClasses' => [
@@ -136,7 +137,7 @@ $this->registerCssFile(Yii::getAlias('@web/theme/') . 'assets/global/plugins/sel
                     'title' => 'Cancel'
                     ]) ?>&nbsp;
 
-                    <?= Html::submitButton('Tambah Kriteria', ['class' => 'btn btn-success']) ?>
+                    <?= Html::submitButton('Buat Metrix', ['class' => 'btn btn-success']) ?>
                 </div>
             </div>&nbsp;
 

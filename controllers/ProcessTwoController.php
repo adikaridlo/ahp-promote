@@ -16,9 +16,10 @@ use app\models\TmpKriteria;
 use app\models\MatrixKriteria;
 use app\models\NilaiLamda;
 use app\models\TableKaryawan;
+use app\models\PerhitunganPrioritas;
+use app\models\PrioritasSoftSkillAhp;
 
-
-class ProcessController extends Controller
+class ProcessTwoController extends Controller
 {
     /**
      * @inheritdoc
@@ -44,6 +45,13 @@ class ProcessController extends Controller
      *
      * @return string
      */
+    public function updateData()
+    {
+        self::MatrixKriteria();
+        self::ProcessLamda();
+        self::TablePerbandingan();
+        // return $this->redirect(['/dashboard/index']);
+    }
     public function actionUpdateMetrix()
     {
         Yii::$app->db->createCommand()->truncateTable('tmp_kriteria')->execute();
@@ -58,6 +66,7 @@ class ProcessController extends Controller
         $model->save();
         self::MatrixKriteria();
         self::ProcessLamda();
+        self::TablePerbandingan();
         return $this->redirect(['/table-kriteria/index']);
     }
     public static function Step1()
@@ -162,7 +171,7 @@ class ProcessController extends Controller
         foreach ($tmp_data as $key => $value) {
             $tmp_data[$key] = array_sum($value);
             foreach ($tmp_data as $key2 => $lamda) {
-                $eigin[$key2]['eigin'] = $lamda;
+                $eigin[$key2]['eigin'] = (float)$lamda/4;
                 $eigin[$key2]->save();
             }
         }
@@ -174,9 +183,9 @@ class ProcessController extends Controller
         foreach ($total as $key => $value) {
             $total[$key] = $value['sum_komunikasi'];
         }
-        echo "<pre>";
+        // echo "<pre>";
         // print_r($total);exit;
-        return print_r($tmp_data);
+        // return print_r($tmp_data);
     }
 
 
@@ -202,91 +211,185 @@ class ProcessController extends Controller
          $Step4->save();
     }
 
-    public function actionTablePerbandingan()
+    public function TablePerbandingan()
     {
         $data = TableKaryawan::find()->all();
-//         echo "<pre>";
-//         print_r($data);
-// exit;
+
         $count = count($data);
         $step;
         $list_nama;
         $hasil_akhir;
 
-        foreach ($data as $key => $a) {
-            $list_nama[] = $a['nama'];
-            for ($i=0; $i < $count ; $i++) { 
-                $step['komunikasi'][$a['nama']][] = $data[$i]['komunikasi']/$data[$key]['komunikasi'];
-            }
-            
-            foreach ($step as $key => $b) {
+        $model = new TableKaryawan();
+        $dt_column = $model->attributes();
 
-                $final['komunikasi'][$a['nama']] = array_sum($b[$a['nama']]);
+        foreach (array_slice($dt_column, 2) as $key => $col) {
+            foreach ($data as $key => $a) {
+                $list_nama[$key] = $a['nama'];
+                for ($i=0; $i < $count ; $i++) { 
+                    $step[$col][$a['nama']][] = $data[$i][$col]/$data[$key][$col];
+                }
             }
-
-            for ($i=0; $i < count($step['komunikasi'][$a['nama']]) ; $i++) { 
-                // echo "<br>".$step['step_1'][$a['nama']][$i];
-                // echo "<br>".$i.'-'.$step['step_1'][$a['nama']][$i] / $final['step_1'][$a['nama']];
-                $smfinal[$a['nama']][$i] = $step['komunikasi'][$a['nama']][$i] / $final['komunikasi'][$a['nama']];
-            }
-        
         }
-        foreach ($smfinal as $key => $value) {
+        foreach (array_slice($dt_column, 2) as $key1 => $col) {
+            foreach ($step as $key2 => $st2) {
+                foreach ($st2 as $key3 => $a) {
+                    if ($key2 == $col) {
+                        $final[$col][$key3] = array_sum($st2[$key3]);
+                    }
+                }
+            }
+        }
+        foreach ($final as $key => $value) {
             foreach ($value as $key2 => $value2) {
-                if (!isset($dataSum[$key2])) {
-                    $dataSum[$key2] = $value2/count($value);
-                } else {
-                    $dataSum[$key2] += $value2/count($value);
+                $tmp[$key][] = $value2;
+            }
+        }
+        foreach (array_slice($dt_column, 2) as $key => $a) {
+            foreach ($data as $key2 => $b) {
+                for ($i=0; $i < 3 ; $i++) { 
+                    $tmpx[$a][$b['nama']][] =  $step[$a][$b['nama']][$i]/$final[$a][$b['nama']];
+                }
+
+            }
+        }
+$dataSum = $tmpx;
+$dataSum2 = $tmpx;
+$list_penjumlah;
+
+        foreach ($tmpx as $key => $value) {
+            foreach ($value as $key2 => $value2) {
+                foreach ($value2 as $key3 => $value3) {
+                    $dataSum[$key][$key2][$key3] =array_column($value,$key3);
+                }
+            }
+        }
+        $eigin = [];
+        $z=0;
+        foreach ($dataSum as $key => $value) {
+            foreach ($value as $key2 => $value2) {
+                foreach ($value2 as $key3 => $value3) {
+                    $eigin[$key][$key3] = array_sum($value2[$key3])/count($value2);
                 }
             }
         }
 
-        foreach ($list_nama as $key => $value) {
-            $hasil_akhir[$value] = $dataSum[$key];
+        foreach ($eigin as $key => $value) {
+            foreach ($value as $key2 => $value2) {
+                    $hasil_akhir[$key][$list_nama[$key2]] = $value2;
+            }
+        }
+        $data_eigin = NilaiLamda::find()->select(['eigin'])->asArray()->all();
+        $tot_lam = count($data_eigin);
+        Yii::$app->db->createCommand()->truncateTable('perhitungan_prioritas')->execute();
+        foreach ($list_nama as $key => $nama) {
+            if (isset($eigin['komunikasi'][$key]) && isset($eigin['kerjasama'][$key]) && isset($eigin['kejujuran'][$key]) && isset($eigin['interpesonal'][$key])) {
+                $model = new PerhitunganPrioritas();
+                $model->setAttributes([
+                    'nama_karyawan' => $nama,
+                    'komunikasi' => $eigin['komunikasi'][$key],
+                    'kerjasama' => $eigin['kerjasama'][$key],
+                    'kejujuran' => $eigin['kejujuran'][$key],
+                    'interpesonal' => $eigin['interpesonal'][$key],
+                    'eigin' => $data_eigin[$key]['eigin']
+                ]);
+                $model->save();
+            }else{
+                $model = new PerhitunganPrioritas();
+                $model->setAttributes([
+                    'nama_karyawan' => $nama,
+                    'komunikasi' => $eigin['komunikasi'][$tot_lam-2],
+                    'kerjasama' => $eigin['kerjasama'][$tot_lam-2],
+                    'kejujuran' => $eigin['kejujuran'][$tot_lam-2],
+                    'interpesonal' => $eigin['interpesonal'][$tot_lam-2],
+                    'eigin' => $data_eigin[$tot_lam-2]['eigin']
+                ]);
+                $model->save();
+            }
         }
 
+        Yii::$app->db->createCommand()->truncateTable('prioritas_soft_skill_ahp')->execute();
+        $data_prioritas = PerhitunganPrioritas::find()->asArray()->all();
 
-        echo "<pre>";
-        print_r($dataSum);
-        print_r($hasil_akhir);
-        print_r($smfinal);exit;
-        echo "<pre>";
-        print_r($step['step_1']['A']);exit;
-        foreach ($data as $key => $a) {
-            for ($i=0; $i < $count ; $i++) { 
-                $step['step_2'][$a['nama']][] = $data[$i]['kerjasama']/$data[$key]['kerjasama'];
-            }
+        foreach (array_slice($dt_column, 2) as $key => $value) {
+                $list_eigin[$value] = $data_eigin[$key]['eigin'];
+        }
+//         echo "<pre>";
+// print_r($list_eigin);exit;
+        foreach ($data_prioritas as $key => $value) {
             
-            foreach ($step as $key => $b) {
-
-                $final['step_2'][$a['nama']] = array_sum($b[$a['nama']]);
-            }
+            $model = new PrioritasSoftSkillAhp();
+            $model->setAttributes([
+                'nama_karyawan' => $value['nama_karyawan'],
+                'nilai' => ($value['komunikasi']*$data_eigin[0]['eigin'])+($value['kerjasama']*$data_eigin[1]['eigin'])+($value['kejujuran']*$data_eigin[2]['eigin']+($value['interpesonal']*$data_eigin[3]['eigin']))
+            ]);
+            $model->save();
+            // echo $value['eigin'];
         }
+        // echo "<pre>";
+        // print_r($list_nama);
+        // print_r($eigin);
+        // print_r($dataSum);exit;
 
-        foreach ($data as $key => $a) {
-            for ($i=0; $i < $count ; $i++) { 
-                $step['step_3'][$a['nama']][] = $data[$i]['kejujuran']/$data[$key]['kejujuran'];
-            }
+        // Finis
+        // $x=0;
             
-            foreach ($step as $key => $b) {
+        // foreach ($smfinal as $key => $value) {
+        //     foreach ($value as $key2 => $value2) {
+        //         if (!isset($dataSum[$key2])) {
+        //             $dataSum[$key2] = $value2/count($value);
+        //         } else {
+        //             $dataSum[$key2] += $value2/count($value);
+        //         }
+        //     }
+        // }
 
-                $final['step_3'][$a['nama']] = array_sum($b[$a['nama']]);
-            }
-        }
+        // foreach ($list_nama as $key => $value) {
+        //     $hasil_akhir[$value] = $dataSum[$key];
+        // }
 
-        foreach ($data as $key => $a) {
-            for ($i=0; $i < $count ; $i++) { 
-                $step['step_4'][$a['nama']][] = $data[$i]['interpesonal']/$data[$key]['interpesonal'];
-            }
+
+        // echo "<pre>";
+        // print_r($dataSum);
+        // print_r($hasil_akhir);
+        // print_r($smfinal);exit;
+        // echo "<pre>";
+        // print_r($step['step_1']['A']);exit;
+        // foreach ($data as $key => $a) {
+        //     for ($i=0; $i < $count ; $i++) { 
+        //         $step['step_2'][$a['nama']][] = $data[$i]['kerjasama']/$data[$key]['kerjasama'];
+        //     }
             
-            foreach ($step as $key => $b) {
+        //     foreach ($step as $key => $b) {
 
-                $final['step_4'][$a['nama']] = array_sum($b[$a['nama']]);
-            }
-        }
-        echo "<pre>";
-        print_r($final);exit;
-        return $step;
+        //         $final['step_2'][$a['nama']] = array_sum($b[$a['nama']]);
+        //     }
+        // }
+
+        // foreach ($data as $key => $a) {
+        //     for ($i=0; $i < $count ; $i++) { 
+        //         $step['step_3'][$a['nama']][] = $data[$i]['kejujuran']/$data[$key]['kejujuran'];
+        //     }
+            
+        //     foreach ($step as $key => $b) {
+
+        //         $final['step_3'][$a['nama']] = array_sum($b[$a['nama']]);
+        //     }
+        // }
+
+        // foreach ($data as $key => $a) {
+        //     for ($i=0; $i < $count ; $i++) { 
+        //         $step['step_4'][$a['nama']][] = $data[$i]['interpesonal']/$data[$key]['interpesonal'];
+        //     }
+            
+        //     foreach ($step as $key => $b) {
+
+        //         $final['step_4'][$a['nama']] = array_sum($b[$a['nama']]);
+        //     }
+        // }
+        // echo "<pre>";
+        // print_r($final);exit;
+        // return $step;
     }
 
 }
